@@ -1,0 +1,7 @@
+.container{
+    display: flex;
+    justify-items: center;
+}
+.display{
+	border: 2px solid black;
+}
