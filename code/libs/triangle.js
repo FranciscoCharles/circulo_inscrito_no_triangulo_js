@@ -1,8 +1,19 @@
 
-const canvas = document.querySelector('.display');
+const canvas = document.querySelector('.display')
 
 function colidePoint(point, raio, mousex, mousey) {
 	return Math.hypot((point[0] - mousex), (point[1] - mousey)) < raio
+}
+
+function radians2degree(radians) {
+	return radians * 180 / Math.PI
+}
+function degree2radians(degree) {
+	return degree * Math.PI / 180
+}
+function getAngulo(a, b, c) {
+	const cosAngle = (Math.pow(b, 2) + Math.pow(c, 2) - Math.pow(a, 2)) / (2 * b * c)
+	return Math.acos(cosAngle)
 }
 function calculaPontoMedio(p1, p2) {
 	return [
@@ -27,7 +38,7 @@ function corrigirPonto([x, y]) {
 	return [x, y]
 }
 if (canvas.getContext) {
-	const ctx = canvas.getContext('2d');
+	const ctx = canvas.getContext('2d')
 	ctx.lineWidth = 4
 
 	class Triange {
@@ -42,12 +53,12 @@ if (canvas.getContext) {
 		}
 		draw() {
 			const [p1, p2] = this.points
-			ctx.clearRect(0, 0, 500, 500);
-			ctx.beginPath();
-			ctx.moveTo(...p1);
-			ctx.lineTo(...p2);
-			ctx.lineTo(...this.unlock_point);
-			ctx.lineTo(...p1);
+			ctx.clearRect(0, 0, 500, 500)
+			ctx.beginPath()
+			ctx.moveTo(...p1)
+			ctx.lineTo(...p2)
+			ctx.lineTo(...this.unlock_point)
+			ctx.lineTo(...p1)
 			ctx.stroke()
 			ctx.closePath()
 
@@ -58,56 +69,50 @@ if (canvas.getContext) {
 			const [p1, p2] = this.points
 			const m1 = calculaPontoMedio(p1, this.unlock_point)
 			const m2 = calculaPontoMedio(p1, p2)
+			const m3 = calculaPontoMedio(p2, this.unlock_point)
 
 			ctx.strokeStyle = 'red'
-			ctx.beginPath();
-			ctx.moveTo(...m1);
-			ctx.lineTo(...p2);
+			ctx.beginPath()
+			ctx.moveTo(...m1)
+			ctx.lineTo(...p2)
 			ctx.stroke()
 			ctx.closePath()
 
 			ctx.strokeStyle = 'blue'
-			ctx.beginPath();
-			ctx.moveTo(...m2);
-			ctx.lineTo(...this.unlock_point);
+			ctx.beginPath()
+			ctx.moveTo(...m2)
+			ctx.lineTo(...this.unlock_point)
 			ctx.stroke()
 			ctx.closePath()
 
+			ctx.strokeStyle = 'orange'
+			ctx.beginPath()
+			ctx.moveTo(...m3)
+			ctx.lineTo(...p1)
+			ctx.stroke()
+			ctx.closePath()
 			ctx.strokeStyle = 'black'
 
-			const a = (m2[1] - this.unlock_point[1]) / (m2[0] - this.unlock_point[0])
-			const N2 = m2[1] - a * m2[0]
+			const a = Math.hypot(p1[0] - p2[0], p1[1] - p2[1])
+			const b = Math.hypot(p2[0] - this.unlock_point[0], p2[1] - this.unlock_point[1])
+			const c = Math.hypot(this.unlock_point[0] - p1[0], this.unlock_point[1] - p1[1])
 
 
-			const b = (m1[1] - p2[1]) / (m1[0] - p2[0])
-			const N1 = m1[1] - b * m1[0]
+			const half_p = (a + b + c) / 2
+			const r = Math.sqrt(half_p * (half_p - a) * (half_p - b) * (half_p - c)) / half_p
 
+			const M2 = getAngulo(c, a, b) / 2
 
-			const xCirculo = (N2 - N1) / (b - a)
-			const yCirculo = xCirculo * b + N1
-
-
-			const la = Math.hypot(p1[0] - p2[0], p1[1] - p2[1])
-			const lb = Math.hypot(p2[0] - this.unlock_point[0], p2[1] - this.unlock_point[1])
-			const lc = Math.hypot(this.unlock_point[0] - p1[0], this.unlock_point[1] - p1[1])
-
-			const half_p = (la + lb + lc) / 2
-			const r = Math.sqrt(half_p * (half_p - la) * (half_p - lb) * (half_p - lc)) / half_p
-			/*
-			A = p*r/2
-
-			2*A/p
-			*/
-			console.log(r);
-			ctx.beginPath();
-			ctx.arc(xCirculo, yCirculo, r, 0, 2 * Math.PI)
+			const d = r / Math.tan(M2)
+			ctx.beginPath()
+			ctx.arc(p2[0] - d, p2[1] - r, r, 0, 2 * Math.PI)
 			ctx.stroke()
 			ctx.closePath()
 		}
 
 	}
 	let timer = undefined
-	const triangle = new Triange(30, 340, 100)
+	const triangle = new Triange(30, 30, 440)
 	let movendo = false
 	let ponto_movido = null
 
