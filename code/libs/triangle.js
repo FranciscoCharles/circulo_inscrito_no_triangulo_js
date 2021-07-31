@@ -6,54 +6,89 @@ class Triange {
 		this.points = [[x, y], [x + L, y + L], [x, y + L]]
 	}
 	draw() {
-		this.drawTriangle()
-		this.drawBissetrizes()
+		this.clearScreen()
 		this.drawInscritCircle()
+		this.drawBissetrizes()
+		this.drawTriangle()
+		this.drawVertexMove()
+	}
+	clearScreen() {
+		const ctx = this.context2d
+		const old_fill_color = ctx.fillStyle
+		ctx.clearRect(0, 0, 500, 500)
+		ctx.fillStyle = 'ghostwhite'
+		ctx.rect(0, 0, 500, 500)
+		ctx.fill()
+		ctx.fillStyle = old_fill_color
 	}
 	drawTriangle() {
 		const ctx = this.context2d
-		const [p1, p2, p3] = this.points
-		ctx.clearRect(0, 0, 500, 500)
 		ctx.beginPath()
-		ctx.moveTo(...p1)
-		ctx.lineTo(...p2)
-		ctx.lineTo(...p3)
-		ctx.lineTo(...p1)
+		this.points.forEach((point, index) => {
+			if (index === 0) ctx.moveTo(...point)
+			else ctx.lineTo(...point)
+		})
+		ctx.lineTo(...this.points[0])
 		ctx.stroke()
 		ctx.closePath()
+
 		this.drawBissetrizes()
+	}
+	drawVertexMove() {
+
+		const ctx = this.context2d
+		const point = this.points[0]
+		const old_line_width = ctx.lineWidth
+		const old_fill_color = ctx.fillStyle
+
+		ctx.fillStyle = 'red'
+		ctx.lineWidth = 2
+
+		drawCircleWithBorder(ctx, point[0], point[1], 10)
+
+		ctx.lineWidth = old_line_width
+		ctx.fillStyle = old_fill_color
 	}
 	drawBissetrizes() {
 		const ctx = this.context2d
-		const [p1, p2, p3] = this.points
-		const m1 = calculateMediunPoint(p1, p3)
-		const m2 = calculateMediunPoint(p1, p2)
-		const m3 = calculateMediunPoint(p2, p3)
+		const colors = ['red', 'blue', 'green']
+		let barycenter_x = 0
+		let barycenter_y = 0
 
-		ctx.strokeStyle = 'red'
-		ctx.beginPath()
-		ctx.moveTo(...m1)
-		ctx.lineTo(...p2)
-		ctx.stroke()
-		ctx.closePath()
+		const old_stroke_color = ctx.strokeStyle
+		this.points.forEach((point, index, points) => {
 
-		ctx.strokeStyle = 'blue'
-		ctx.beginPath()
-		ctx.moveTo(...m2)
-		ctx.lineTo(...p3)
-		ctx.stroke()
-		ctx.closePath()
+			const next_point = points[(index + 1) % 3]
+			const end_point = points[(index + 2) % 3]
+			const mediun_point = calculateMediunPoint(point, next_point)
 
-		ctx.strokeStyle = 'orange'
-		ctx.beginPath()
-		ctx.moveTo(...m3)
-		ctx.lineTo(...p1)
-		ctx.stroke()
-		ctx.closePath()
-		ctx.strokeStyle = 'black'
+			ctx.strokeStyle = colors[index]
+			ctx.beginPath()
+			ctx.moveTo(...mediun_point)
+			ctx.lineTo(...end_point)
+			ctx.stroke()
+			ctx.closePath()
+
+			barycenter_x += point[0]
+			barycenter_y += point[1]
+		})
+		barycenter_x /= 3
+		barycenter_y /= 3
+		ctx.strokeStyle = old_stroke_color
+
+		const old_fill_color = ctx.fillStyle
+		const old_line_width = ctx.lineWidth
+
+		ctx.fillStyle = 'green'
+		ctx.lineWidth = 2
+		drawCircleWithBorder(ctx, barycenter_x, barycenter_y, 10, 10)
+
+		ctx.fillStyle = old_fill_color
+		ctx.lineWidth = old_line_width
 
 	}
 	drawInscritCircle() {
+
 		const ctx = this.context2d
 		const [p1, p2, p3] = this.points
 		const a = Math.hypot(p1[0] - p2[0], p1[1] - p2[1])
@@ -63,13 +98,23 @@ class Triange {
 		const half_p = (a + b + c) / 2
 		const radius = Math.sqrt(half_p * (half_p - a) * (half_p - b) * (half_p - c)) / half_p
 
-		const M2 = getAngle(c, a, b) / 2
-		const distance = radius / Math.tan(M2)
+		const ab_angle = getAngle(c, a, b) / 2
+		const distance = radius / Math.tan(ab_angle)
+		const x_circle = p2[0] - distance
+		const y_circle = p2[1] - radius
 
-		ctx.beginPath()
-		ctx.arc(p2[0] - distance, p2[1] - radius, radius, 0, 2 * Math.PI)
-		ctx.stroke()
-		ctx.closePath()
+		const old_fill_color = ctx.fillStyle
+		const old_line_width = ctx.lineWidth
+
+		ctx.fillStyle = 'rgba(255, 0, 0, 0.5)'
+		drawCircleWithBorder(ctx, x_circle, y_circle, radius, radius)
+
+		ctx.fillStyle = 'rgba(100, 0, 0, 0.5)'
+		ctx.lineWidth = 2
+		drawCircleWithBorder(ctx, x_circle, y_circle, 10, 10)
+
+		ctx.fillStyle = old_fill_color
+		ctx.lineWidth = old_line_width
 	}
 
 }
