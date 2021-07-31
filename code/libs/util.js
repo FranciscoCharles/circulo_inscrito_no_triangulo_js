@@ -1,6 +1,6 @@
 
-function collidePoint(point, raio, mousex, mousey) {
-	return Math.hypot((point[0] - mousex), (point[1] - mousey)) < raio
+function collidePoint(point, radius, mousex, mousey) {
+	return Math.hypot((point[0] - mousex), (point[1] - mousey)) < radius
 }
 function radians2degree(radians) {
 	return radians * 180 / Math.PI
@@ -33,4 +33,12 @@ function checkAndResolvePoint([x, y], maxX, maxY) {
 		y = maxY
 	}
 	return [x, y]
+}
+function drawCircleWithBorder(ctx, x, y, radius, radius_border) {
+	ctx.beginPath()
+	ctx.arc(x, y, radius, 0, 2 * Math.PI)
+	ctx.fill()
+	ctx.arc(x, y, radius_border, 0, 2 * Math.PI)
+	ctx.stroke()
+	ctx.closePath()
 }
