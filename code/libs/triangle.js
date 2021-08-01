@@ -81,7 +81,7 @@ class Triange {
 
 		ctx.fillStyle = 'green'
 		ctx.lineWidth = 2
-		drawCircleWithBorder(ctx, barycenter_x, barycenter_y, 10, 10)
+		drawCircleWithBorder(ctx, barycenter_x, barycenter_y, 10)
 
 		ctx.fillStyle = old_fill_color
 		ctx.lineWidth = old_line_width
@@ -107,11 +107,11 @@ class Triange {
 		const old_line_width = ctx.lineWidth
 
 		ctx.fillStyle = 'rgba(255, 0, 0, 0.5)'
-		drawCircleWithBorder(ctx, x_circle, y_circle, radius, radius)
+		drawCircleWithBorder(ctx, x_circle, y_circle, radius)
 
 		ctx.fillStyle = 'rgba(100, 0, 0, 0.5)'
 		ctx.lineWidth = 2
-		drawCircleWithBorder(ctx, x_circle, y_circle, 10, 10)
+		drawCircleWithBorder(ctx, x_circle, y_circle, 10)
 
 		ctx.fillStyle = old_fill_color
 		ctx.lineWidth = old_line_width
