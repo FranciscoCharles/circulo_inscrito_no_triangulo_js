@@ -18,7 +18,7 @@ function calculateMediunPoint(p1, p2) {
 		parseInt((p1[1] + p2[1]) / 2)
 	]
 }
-function pointWithinLimits([x, y], maxX, maxY) {
+function pointWithinLimits(x, y, maxX, maxY) {
 	return (x > 0) && (x < maxX) && (y > 0) && (y < maxY)
 }
 function checkAndResolvePoint([x, y], maxX, maxY) {
@@ -34,11 +34,10 @@ function checkAndResolvePoint([x, y], maxX, maxY) {
 	}
 	return [x, y]
 }
-function drawCircleWithBorder(ctx, x, y, radius, radius_border) {
+function drawCircleWithBorder(ctx, x, y, radius) {
 	ctx.beginPath()
 	ctx.arc(x, y, radius, 0, 2 * Math.PI)
 	ctx.fill()
-	ctx.arc(x, y, radius_border, 0, 2 * Math.PI)
 	ctx.stroke()
 	ctx.closePath()
 }
